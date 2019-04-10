@@ -39,7 +39,7 @@ def postCoverage(Double coverage, Double threshold) {
   }
 
   final state = (coverage >= threshold) ? "success" : "failure"
-  final context = "code-coverage"
+  final context = "continuous-integration/jenkins/code-coverage"
   final description = "${coverage}% (threshold: ${threshold}%)"
   postCommitStatus(state, context, description)
 }
@@ -58,7 +58,7 @@ def postCoverageDelta(Double coverageDelta, Double threshold) {
 
   final maybePlus = (coverageDelta > 0) ? "+" : ""
   final state = (coverageDelta >= threshold) ? "success" : "failure"
-  final context = "code-coverage-delta"
+  final context = "continuous-integration/jenkins/code-coverage-delta"
   final groovy.lang.GString description = "${maybePlus}${coverageDelta}% (threshold: ${threshold}%)"
   postCommitStatus(state, context, description)
 }
@@ -94,7 +94,7 @@ def Double getCoverage(String ref) {
 
 content = json.load(sys.stdin)
 for status in content[\"statuses\"]:
-    if status[\"context\"] == \"code-coverage\":
+    if status[\"context\"] == \"continuous-integration/jenkins/code-coverage\":
         print status[\"description\"].split(\"%\")[0]
         sys.exit(0)'
       """)
