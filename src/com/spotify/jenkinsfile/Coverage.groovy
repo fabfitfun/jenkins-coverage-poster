@@ -72,19 +72,18 @@ def Double getCoverageDelta() {
 
 def Double getCoverage(String ref) {
   withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'github-user-token',
-                    usernameVariable: 'NOT_USED', passwordVariable: 'TOKEN']]) {
+                    usernameVariable: 'USER', passwordVariable: 'TOKEN']]) {
 
     final coverage = sh(returnStdout: true, script: """#!/bin/bash -xe
       GITHUB_HOST=\$(git config remote.origin.url | cut -d/ -f3)
       GITHUB_API_URL=\$([[ "\${GITHUB_HOST}" == "github.com" ]] && echo "api.github.com" || echo "\${GITHUB_HOST}/api/v3")
-      ORG_REPO_BRANCH_ARRAY=(\${JOB_NAME//// })
-      ORG=\${ORG_REPO_BRANCH_ARRAY[0]}
-      REPO=\${ORG_REPO_BRANCH_ARRAY[1]}
+      ORG=\$(echo \${GIT_URL:8} |cut -f 2 -d "/")
+      REPO=\$(echo \${GIT_URL:8} |cut -f 3 -d "/")
 
       if [[ ${ref} == HEAD ]]; then
         COMMIT_HASH=\$(git rev-parse HEAD)
       else
-        COMMIT_HASH=\$(git ls-remote git@\${GITHUB_HOST}:\${ORG}/\${REPO}.git "${ref}" | cut -f1)
+        COMMIT_HASH=\$(git ls-remote https:\/\/\${USER}:\${TOKEN}@\${GIT_URL:8} "${ref}" | cut -f1)
       fi
 
       COMMIT_STATUS_URL=\$(echo "https://\${GITHUB_API_URL}/repos/\${ORG}/\${REPO}/commits/\${COMMIT_HASH}/status")
