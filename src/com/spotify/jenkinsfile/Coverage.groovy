@@ -89,7 +89,7 @@ def Double getCoverage(String ref) {
 
       COMMIT_STATUS_URL=\$(echo "https://\${GITHUB_API_URL}/repos/\${ORG}/\${REPO}/commits/\${COMMIT_HASH}/status")
       TOKEN_PARAM="access_token=\$TOKEN"
-      COMMIT_JSON=\$(curl "\${COMMIT_STATUS_URL}" -H 'Authorization: \${TOKEN}')
+      COMMIT_JSON=\$(curl -H "Authorization: token \${TOKEN}" "\${COMMIT_STATUS_URL}")
 
       echo \$COMMIT_JSON | python -c 'import sys, json
 
@@ -124,7 +124,7 @@ def postCommitStatus(String state, String context, String description) {
       TOKEN_PARAM="access_token=\${TOKEN}"
       COMMIT_STATUS_URL=\$(echo "https://\${GITHUB_API_URL}/repos/\${ORG}/\${REPO}/statuses/\${COMMIT_HASH}")
 
-      curl -isSL -X POST "\${COMMIT_STATUS_URL}" -H 'Authorization: \${TOKEN}' -d '{
+      curl -isSL -H "Authorization: token \${TOKEN}" -X POST "\${COMMIT_STATUS_URL}" -d '{
         \"state\": \"${state}\",
         \"target_url\": \"'\${BUILD_URL}'\",
         \"context\": \"${context}\",
